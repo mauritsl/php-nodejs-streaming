@@ -15,6 +15,7 @@ ln -sf /usr/share/zoneinfo/Europe/Amsterdam /etc/localtime
 # Node.js
 echo Installing NodeJS...
 apt-get -y install npm
+apt-get -y install nodejs-legacy
 
 # Node modules
 echo Installing NodeJS modules...

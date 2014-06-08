@@ -4,8 +4,8 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "socket.io": "*",
-    "then-redis": "*",
+    "socket.io": "~1.0.4",
+    "then-redis": "~0.3.12",
     "cookie": "~0.1.2"
   },
   "scripts": {
