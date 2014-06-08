@@ -25,6 +25,7 @@ cd ~
 cp /data/streaming/vagrant/conf/streaming-nodejs /etc/init.d/streaming-nodejs
 chmod +x /etc/init.d/streaming-nodejs
 service streaming-nodejs start
+update-rc.d streaming-nodejs start 3 4 6 . stop 0 1 6 .
 
 # NginX
 echo Installing NginX...
@@ -48,12 +49,3 @@ service php5-fastcgi start
 
 # Redis
 apt-get install -y redis-server
-
-# GIT
-apt-get install -y git
-
-# Grunt
-apt-get install -y nodejs-legacy
-npm install -g grunt-cli
-
-(cd /data/streaming && grunt)

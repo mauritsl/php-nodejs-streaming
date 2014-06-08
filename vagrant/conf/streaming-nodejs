@@ -1,13 +1,23 @@
 #!/bin/bash
+### BEGIN INIT INFO
+# Provides:          streaming-nodejs
+# Required-Start:    $remote_fs $syslog redis-server
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Streaming NodeJS server
+# Description:       Streaming NodeJS server
+### END INIT INFO
+
 DIR=/data/streaming/nodejs
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
-NODE_PATH=/usr/local/lib/node_modules
-NODE=/usr/local/bin/node
+NODE_PATH=/usr/lib/nodejs
+NODE=/usr/bin/nodejs
 
 test -x $NODE || exit 0
 
 function start_app {
-  NODE_ENV=production nohup "$NODE" "$DIR/api.js" 1>>"/var/log/streaming-nodejs.log" 2>&1 &
+  NODE_ENV=production nohup "$NODE" "$DIR/streaming.js" 1>>"/var/log/streaming-nodejs.log" 2>&1 &
   echo $! > "/var/run/streaming-nodejs.pid"
 }
 
@@ -16,16 +26,20 @@ function stop_app {
 }
 
 case $1 in
-   start)
-      start_app ;;
-    stop)
-      stop_app ;;
-    restart)
-      stop_app
-      start_app
-      ;;
-    *)
-      echo "usage: start|stop" ;;
+  start)
+    start_app ;;
+  stop)
+    stop_app ;;
+  restart)
+    stop_app
+    start_app
+    ;;
+  force-reload)
+    stop_app
+    start_app
+    ;;
+  *)
+    echo "usage: start|stop" ;;
 esac
 exit 0
 
