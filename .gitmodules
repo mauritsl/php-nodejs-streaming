@@ -1,0 +1,6 @@
+[submodule "php/lib/redis-session"]
+	path = php/lib/redis-session
+	url = https://TheDeveloper@github.com/TheDeveloper/redis-session-php.git
+[submodule "php/lib/predis"]
+	path = php/lib/predis
+	url = https://github.com/nrk/predis.git

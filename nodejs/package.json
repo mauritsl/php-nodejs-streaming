@@ -1,0 +1,13 @@
+{
+  "name": "streaming",
+  "description": "Streaming",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "socket.io": "*",
+    "then-redis": "*"
+  },
+  "scripts": {
+    "start": "nodejs streaming.js"
+  }
+}
