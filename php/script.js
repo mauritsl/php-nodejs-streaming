@@ -2,16 +2,7 @@ $(function() {
   // Connect to the NodeJS application via Socket.IO.
   var socket = io.connect(window.location.hostname + ':81');
   
-  // When connected..
-  socket.on('connect', function() {
-    // Send our session id.
-    var match = document.cookie.match(/PHPSESSID\=([a-z0-9]+)/);
-    if (match) {
-      socket.emit('session', match[1]);
-    }
-  });
-  
-  // When we got a "name" message.
+  // The server will tell us our username, based on the session cookie.
   socket.on('name', function(data) {
     // Update the username.
     $('#username').text(data);

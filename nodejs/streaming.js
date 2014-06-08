@@ -2,27 +2,54 @@
 var db = require('then-redis').createClient();
 var subscriber = require('then-redis').createClient();
 var io = require('socket.io')(81);
+var cookie = require('cookie');
 
 // Socket objects of online users, keyed by username.
 var users = {};
 
-// When client connects...
-io.on('connection', function(socket) {
-  var name = null;
+// Define an authorization function. We will check of the user has a valid
+// session and grab the username.
+io.use(function(socket, next) {
+  // Check if a cookie is set.
+  if (typeof socket.handshake.headers.cookie === 'undefined') {
+    next(new Error('No session found.'));
+  }
   
-  // When we get a session message...
-  socket.on('session', function(key) {
-    db.get('session:php:' + key).then(function(session) {
+  // Parse the cookie header.
+  var cookies = cookie.parse(socket.handshake.headers.cookie);
+  if (typeof cookies.PHPSESSID === 'undefined') {
+    // There is no PHPSESSID cookie.
+    next(new Error('No session found.'));
+  }
+  
+  // Get the session from Redis.
+  db.get('session:php:' + cookies.PHPSESSID).then(function(session) {
+    if (session) {
       session = JSON.parse(session);
       if (typeof session.name !== undefined) {
-        name = session.name;
-        users[name] = socket;
-        socket.emit('name', name);
-        socket.emit('message', 'Welcome ' + name + '!');
-        io.emit('userlist', Object.keys(users));
+        // Temporary store the username.
+        socket.handshake.username = session.name;
+        // Tell Socket.IO that this connection is valid.
+        next();
       }
-    });
+    }
+    else {
+      // No response from Redis. This session is expired or invalid.
+      next(new Error('Invalid session.'));
+    }
   });
+});
+
+// When client connects...
+io.on('connection', function(socket) {
+  // Get the username, which was set by the authorization function.
+  var name = socket.handshake.username;
+  
+  // Update the list of users.
+  users[name] = socket;
+  socket.emit('name', name);
+  socket.emit('message', 'Welcome ' + name + '!');
+  io.emit('userlist', Object.keys(users));
   
   // When client disconnects.
   socket.on('disconnect', function() {

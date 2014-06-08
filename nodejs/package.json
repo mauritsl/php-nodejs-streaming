@@ -5,7 +5,8 @@
   "private": true,
   "dependencies": {
     "socket.io": "*",
-    "then-redis": "*"
+    "then-redis": "*",
+    "cookie": "~0.1.2"
   },
   "scripts": {
     "start": "nodejs streaming.js"
